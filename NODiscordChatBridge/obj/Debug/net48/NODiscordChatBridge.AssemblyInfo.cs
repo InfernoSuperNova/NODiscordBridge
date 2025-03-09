@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NODiscordChatBridge")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("0.1.1.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.1.1+3bf41109a5c5436edf202842aeb1b06093cf8a74")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.1.1+46bebf193259be3b4c8fff8caeeb89897f9cdb87")]
 [assembly: System.Reflection.AssemblyProductAttribute("deltawing.nodiscordchatbridge")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NODiscordChatBridge")]
 [assembly: System.Reflection.AssemblyVersionAttribute("0.1.1.0")]

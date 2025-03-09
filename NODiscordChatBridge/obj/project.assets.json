@@ -1281,7 +1281,7 @@
     "/home/deltawing/.nuget/packages/": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "0.1.1",
     "restore": {
       "projectUniqueName": "/home/deltawing/RiderProjects/NODiscordBridge/NODiscordChatBridge/NODiscordChatBridge.csproj",
       "projectName": "NODiscordChatBridge",

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Logging;
@@ -125,7 +126,14 @@ public static class Patch_TargetReceiveMessage
     [HarmonyPrefix]
     public static bool Prefix(INetworkPlayer _, string message, Player player, bool allChat)
     {
-        NODiscordChatBridge._singleton.MessageToDiscord(message, NOMessageType.Chat, player);
+        try
+        {
+            NODiscordChatBridge._singleton.MessageToDiscord(message, NOMessageType.Chat, player);
+        }
+        catch (Exception ex)
+        {
+            NODiscordChatBridge.Logger.LogError(ex);
+        }
         // Return 'true' to allow the original method to proceed
         return true; 
     }

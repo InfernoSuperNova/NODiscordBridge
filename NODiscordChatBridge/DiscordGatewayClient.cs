@@ -198,6 +198,7 @@ public class DiscordGatewayClient
                 string content = data["content"]?.ToString() ?? "";
                 string channelId = data["channel_id"]?.ToString() ?? "Unknown";
 
+                if (channelId != _chatChannelId) break;
                 string msg = $"[discord][{sender}] {content}";
                 _logger.LogInfo(msg);
 

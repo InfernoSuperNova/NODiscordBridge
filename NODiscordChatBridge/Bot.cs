@@ -175,7 +175,7 @@ public class Bot
         }
         catch (Exception ex)
         {
-            _logger.LogFatal($"{ex.Message}");
+            _logger.LogError($"{ex.Message}");
         }
     }
 

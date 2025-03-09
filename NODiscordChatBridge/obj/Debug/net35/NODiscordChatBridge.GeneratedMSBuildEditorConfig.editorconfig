@@ -1,0 +1,5 @@
+is_global = true
+build_property.RootNamespace = NODiscordChatBridge
+build_property.ProjectDir = /home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 

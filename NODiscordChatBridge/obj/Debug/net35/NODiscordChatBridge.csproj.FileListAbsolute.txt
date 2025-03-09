@@ -1,0 +1,10 @@
+/home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/bin/Debug/net35/NODiscordChatBridge.dll
+/home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/bin/Debug/net35/NODiscordChatBridge.pdb
+/home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/obj/Debug/net35/NODiscordChatBridge.csproj.AssemblyReference.cache
+/home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/obj/Debug/net35/MyPluginInfo.cs
+/home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/obj/Debug/net35/NODiscordChatBridge.GeneratedMSBuildEditorConfig.editorconfig
+/home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/obj/Debug/net35/NODiscordChatBridge.AssemblyInfoInputs.cache
+/home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/obj/Debug/net35/NODiscordChatBridge.AssemblyInfo.cs
+/home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/obj/Debug/net35/NODiscordChatBridge.csproj.CoreCompileInputs.cache
+/home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/obj/Debug/net35/NODiscordChatBridge.dll
+/home/deltawing/RiderProjects/NODiscordChatBridge/NODiscordChatBridge/obj/Debug/net35/NODiscordChatBridge.pdb

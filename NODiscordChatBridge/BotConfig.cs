@@ -8,10 +8,11 @@ namespace NODiscordChatBridge;
 
 public class BotConfig
 {
-    public string BotToken { get; set; }
-    public string ChatChannelId { get; set; }
-    public string KillLogChannelId { get; set; }
-    public int KillLoggingLevel { get; set; }
+    public static BotConfig I;
+    public string BotToken { get; private set; }
+    public string ChatChannelId { get; private set; }
+    public string KillLogChannelId { get; private set; }
+    public int KillLoggingLevel { get; private set; }
 
     private static string ConfigPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "discord_config.json");
     
@@ -32,6 +33,7 @@ public class BotConfig
 
         var config = JsonConvert.DeserializeObject<BotConfig>(File.ReadAllText(ConfigPath));
         WriteConfigWithComments(config);
+        BotConfig.I = config;
         return config;
     }
 

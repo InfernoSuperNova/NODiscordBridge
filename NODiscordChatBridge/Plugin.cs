@@ -159,3 +159,46 @@ public static class Patch_RpcKillMessage
     }
 }
 
+[HarmonyPatch(typeof(MessageManager), "JoinMessage")]
+
+public static class Patch_JoinMessage
+{
+    [HarmonyPrefix]
+    public static bool Prefix(MessageManager __instance, Player player)
+    {
+        try
+        {
+            string message = player.PlayerName + " joined the game";
+            NODiscordChatBridge._singleton.MessageToDiscord(message, NOMessageType.Chat, player);
+        }
+        catch (Exception ex)
+        {
+            NODiscordChatBridge.Logger.LogError(ex);
+        }
+        return true;
+    }
+    
+}
+
+[HarmonyPatch(typeof(MessageManager), "DisconnectedMessage")]
+
+public static class Patch_DisconnectedMessage
+{
+    [HarmonyPrefix]
+    public static bool Prefix(MessageManager __instance, Player player)
+    {
+        try
+        {
+            string message = player.PlayerName + " disconnected";
+            NODiscordChatBridge._singleton.MessageToDiscord(message, NOMessageType.Chat, player);
+        }
+        catch (Exception ex)
+        {
+            NODiscordChatBridge.Logger.LogError(ex);
+        }
+        return true;
+    }
+    
+}
+
+

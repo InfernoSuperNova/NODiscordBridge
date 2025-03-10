@@ -47,7 +47,7 @@ public class BotConfig
             { "BotToken", ("Discord bot token (replace with your bot's token)", config.BotToken) },
             { "ChatChannelId", ("ID of the chat channel where messages are relayed", config.ChatChannelId) },
             { "KillLogChannelId", ("ID of the channel where the killfeed is sent", config.KillLogChannelId) },
-            { "KillLoggingLevel", ("Level of killfeed (0 = off, 1 = player related only, 2 = all)", config.KillLoggingLevel) }
+            { "KillLoggingLevel", ("Level of killfeed (0 = off, 1 = player on player only, 2 = at least one player involved, 3 = all)", config.KillLoggingLevel) }
         };
 
         var sb = new StringBuilder();

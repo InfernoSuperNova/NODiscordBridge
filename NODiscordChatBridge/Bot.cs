@@ -18,10 +18,9 @@ public class Bot
     // TODO: Make bot appear as online
     // TODO: Presence (match duration, playercount vs playercount, score vs score
     
-    private static string _chatChannelId = "";
+    private static BotConfig _config;
     
     private static ManualLogSource _logger;
-    private static string _botToken = ""; // Replace with your bot token
     private const string ApiUrl = "https://discord.com/api/v10/";
 
     private static readonly HttpClient Client = new HttpClient();
@@ -31,19 +30,18 @@ public class Bot
     private static DiscordGatewayClient _discordClient;
     public static void Main(ManualLogSource log)
     {
-        var config = BotConfig.LoadConfig();
-        _botToken = config.BotToken;
-        _chatChannelId = config.ChatChannelId;
+        _config = BotConfig.LoadConfig();
+
         
         
         _logger = log;
         // Set the authorization header with the bot token
-        Client.DefaultRequestHeaders.Add("Authorization", $"Bot {_botToken}");
+        Client.DefaultRequestHeaders.Add("Authorization", $"Bot {_config.BotToken}");
         // await UpdatePresence("Playing Match: Player 1 vs Player 2", "playing");
         
         
-        _discordClient = new DiscordGatewayClient(_botToken, _logger, _chatChannelId);
-        NODiscordChatBridge._singleton.StartCoroutine(ConnectAndListenCoroutine());
+        _discordClient = new DiscordGatewayClient(_config.BotToken, _logger, _config.ChatChannelId);
+        NODiscordChatBridge.I.StartCoroutine(ConnectAndListenCoroutine());
 
         
     }
@@ -91,7 +89,7 @@ public class Bot
         string status = "online"
     )
     {
-        NODiscordChatBridge._singleton.StartCoroutine(UpdateRichPresenceCoroutine(details, state, startTimestamp,
+        NODiscordChatBridge.I.StartCoroutine(UpdateRichPresenceCoroutine(details, state, startTimestamp,
             endTimestamp, largeImageKey, largeImageText, smallImageKey, smallImageText, status));
     }
 
@@ -115,7 +113,7 @@ public class Bot
     }
     public static void SetStatus(string status, int type = 0)
     {
-        NODiscordChatBridge._singleton.StartCoroutine(UpdateStatusCoroutine(status, type));
+        NODiscordChatBridge.I.StartCoroutine(UpdateStatusCoroutine(status, type));
     }
 
     private static IEnumerator UpdateStatusCoroutine(string status, int type)
@@ -129,7 +127,13 @@ public class Bot
     public static void ChatToDiscord(string chat)
     {
         // Start a coroutine to handle the async call
-        NODiscordChatBridge._singleton.StartCoroutine(SendMessageCoroutine(_chatChannelId, chat));
+        NODiscordChatBridge.I.StartCoroutine(SendMessageCoroutine(_config.ChatChannelId, chat));
+    }
+
+    public static void KillfeedToDiscord(string kill)
+    {
+        // Start a coroutine to handle the async call
+        NODiscordChatBridge.I.StartCoroutine(SendMessageCoroutine(_config.KillLogChannelId, kill));
     }
 
     private static IEnumerator SendMessageCoroutine(string channelId, string message)

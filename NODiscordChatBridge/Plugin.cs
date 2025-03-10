@@ -6,6 +6,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using System.Reflection;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Mirage;
 
 
@@ -25,14 +26,14 @@ public enum NOMessageType
 public class NODiscordChatBridge : BaseUnityPlugin
 {
     public static bool MessageJustSent = false;
-    public static NODiscordChatBridge _singleton;
+    public static NODiscordChatBridge I;
     public static new ManualLogSource Logger;
 
     NODiscordChatBridge()
     {
-        if (!_singleton)
+        if (!I)
         {
-            _singleton = this;
+            I = this;
         }
     }
     private void Awake()
@@ -64,7 +65,7 @@ public class NODiscordChatBridge : BaseUnityPlugin
     }
 
 
-    public void MessageToDiscord(string message, NOMessageType type, object data)
+    public void MessageToDiscord(string message, NOMessageType type, [CanBeNull] object data)
     {
         if (MessageJustSent)
         {
@@ -76,12 +77,12 @@ public class NODiscordChatBridge : BaseUnityPlugin
             case NOMessageType.Chat:
                 if (data is Player player)
                 {
-                    string factionTag = "SPEC";
+                    string factionTag = "";
                     if (player.HQ && player.HQ.faction && player.HQ.faction.factionTag != null)
                     {
-                        factionTag = player.HQ.faction.factionTag;
+                        factionTag = "[" + player.HQ.faction.factionTag + "]";
                     }
-                    Bot.ChatToDiscord("[" + factionTag + "][" + player.PlayerName + "] " + message);
+                    Bot.ChatToDiscord(factionTag + "[" + player.PlayerName + "] " + message);
                 }
                 else
                 {
@@ -89,8 +90,10 @@ public class NODiscordChatBridge : BaseUnityPlugin
                 }
                 break;
             case NOMessageType.Killfeed:
+                Bot.KillfeedToDiscord(message);
                 break;
             case NOMessageType.System:
+                Bot.ChatToDiscord(message);
                 break;
         }
     }
@@ -104,7 +107,7 @@ public static class Patch_GameMessage
     [HarmonyPrefix]
     public static bool Prefix(string message)
     {
-        NODiscordChatBridge._singleton.ForwardMessage(message);
+        NODiscordChatBridge.I.ForwardMessage(message);
         return true; // Proceed with the original GameMessage method
     }
 }
@@ -118,7 +121,7 @@ public static class Patch_DelayedGameMessage
     public static bool Prefix(string message, float secondsBetweenLine)
     {
         // Should we respect the delay provided? Maybe
-        NODiscordChatBridge._singleton.ForwardMessage(message);
+        NODiscordChatBridge.I.ForwardMessage(message);
         return true; // Proceed with the original DelayedGameMessage method
     }
 }
@@ -132,7 +135,7 @@ public static class Patch_TargetReceiveMessage
     {
         try
         {
-            NODiscordChatBridge._singleton.MessageToDiscord(message, NOMessageType.Chat, player);
+            NODiscordChatBridge.I.MessageToDiscord(message, NOMessageType.Chat, player);
         }
         catch (Exception ex)
         {
@@ -151,11 +154,82 @@ public static class Patch_RpcKillMessage
 
     public static bool Prefix(MessageManager __instance, int killerID, int killedID, KillType killedType)
     {
+        int interactionType = 0;
         PersistentUnit killer = UnitRegistry.GetPersistentUnit(killerID);
         PersistentUnit killed = UnitRegistry.GetPersistentUnit(killedID);
+        if (killed == null) return true;
         
-        // TODO: Kill feed
+        killed.GetFaction();
+        killer?.GetFaction();
+        
+
+        string killedFactionTag = "";
+        if (killed.HQ != null) killedFactionTag = "[" + killed.HQ.faction.factionTag + "]";
+
+        interactionType += killed.unitName.Contains("[") ? 1 : 0; // Increment flag by 1 if it's a player (square brackets are a dead giveaway)
+
+
+        if (killer == null)
+        {
+            string cause;
+            switch (killedType)
+            {
+                case KillType.Aircraft:
+                    cause = " crashed";
+                    break;
+                case KillType.Vehicle:
+                    cause = " was destroyed";
+                    break;
+                case KillType.Building:
+                    cause = " collapsed";
+                    break;
+                case KillType.Ship:
+                    cause = " sank";
+                    break;
+                default:
+                    cause = "";
+                    break;
+            }
+            string message = killedFactionTag + killed.unitName + cause;
+            NODiscordChatBridge.I.MessageToDiscord(message, NOMessageType.Killfeed, null);
+            return true;
+        }
+        interactionType += killer.unitName.Contains("[") ? 2 : 0; // Increment flag by 1 if it's a player (square brackets are a dead giveaway)
+        // This means that the flag will either be:
+        // 0, no players involved
+        // 1, killed is a player
+        // 2, killer is a player,
+        // 3, both are players
+        string killerFactionTag = "";
+        if (killer.HQ != null) killerFactionTag = "[" + killer.HQ.faction.factionTag + "]";
+        string action = "";
+        switch (killedType)
+        {
+                
+            case KillType.Aircraft:
+                action = " shot down ";
+                break;
+            case KillType.Vehicle:
+                action = " destroyed ";
+                break;
+            case KillType.Building:
+                action = " demolished ";
+                break;
+            case KillType.Missile:
+                action = " intercepted ";
+                break;
+            case KillType.Ship:
+                action = " sank ";
+                break;
+        }
+
+        string friendlyFire = killedFactionTag == killerFactionTag ? " [ FRIENDLY FIRE! ]" : "";
+        
+        string message2 = killerFactionTag + killer.unitName + action + killedFactionTag + killed.unitName + friendlyFire;
+        NODiscordChatBridge.I.MessageToDiscord(message2, NOMessageType.Killfeed, null);
         return true;
+        
+        
     }
 }
 
@@ -169,7 +243,7 @@ public static class Patch_JoinMessage
         try
         {
             string message = joinedPlayer.PlayerName + " joined the game";
-            NODiscordChatBridge._singleton.MessageToDiscord(message, NOMessageType.Chat, joinedPlayer);
+            NODiscordChatBridge.I.MessageToDiscord(message, NOMessageType.System, joinedPlayer);
         }
         catch (Exception ex)
         {
@@ -190,7 +264,7 @@ public static class Patch_DisconnectedMessage
         try
         {
             string message = player.PlayerName + " disconnected";
-            NODiscordChatBridge._singleton.MessageToDiscord(message, NOMessageType.Chat, player);
+            NODiscordChatBridge.I.MessageToDiscord(message, NOMessageType.System, player);
         }
         catch (Exception ex)
         {

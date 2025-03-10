@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using BepInEx;
@@ -76,8 +76,12 @@ public class NODiscordChatBridge : BaseUnityPlugin
             case NOMessageType.Chat:
                 if (data is Player player)
                 {
-                    var tag = player.HQ.faction.factionTag;
-                    Bot.ChatToDiscord("[" + tag + "][" + player.PlayerName + "] " + message);
+                    string factionTag = "SPEC";
+                    if (player.HQ && player.HQ.faction && player.HQ.faction.factionTag != null)
+                    {
+                        factionTag = player.HQ.faction.factionTag;
+                    }
+                    Bot.ChatToDiscord("[" + factionTag + "][" + player.PlayerName + "] " + message);
                 }
                 else
                 {

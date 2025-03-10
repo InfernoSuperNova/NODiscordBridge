@@ -90,7 +90,39 @@ public class NODiscordChatBridge : BaseUnityPlugin
                 }
                 break;
             case NOMessageType.Killfeed:
-                Bot.KillfeedToDiscord(message);
+                if (data is int interactionType)
+                {
+                    // E0, no players involved                                      (EVE)
+                    // E1, killed is a player                                       (PVE)
+                    // E2, killer is a player,                                      (PVE)
+                    // I3, killer is a player, killed is a player                   (PVP)
+                    // E4, Killed crashed                                           (null case)
+                    // I5, killed is a player, killed crashed                       (Other)
+                    // I6, killer is a player, killed crashed                       (null case)
+                    // I7, killed is a player, killer is a player, killed crashed   (null case)
+                    // E8, Friendly Fire                                            (FF)
+                    bool send = false;
+                    switch (BotConfig.I.KillLoggingLevel)
+                    {
+                        
+                        case 0: // None
+                            break;
+                        case 1: // PVP only
+                            if ((interactionType & 1) != 0 && (interactionType & 2) != 0) send = true;
+                            break;
+                        case 2: // PVP/PVE
+                            if ((interactionType & 1) != 0 || (interactionType & 2) != 0) send = true;
+                            break;
+                        case 3: // PVP/PVE/EVE
+                            send = true;
+                            break;
+                    }
+
+                    if (BotConfig.I.AlwaysLogFriendlyFire && (interactionType & 8) != 0) send = true;
+                    if (send) Bot.KillfeedToDiscord(message);
+                        
+                }
+                
                 break;
             case NOMessageType.System:
                 Bot.ChatToDiscord(message);
@@ -171,6 +203,7 @@ public static class Patch_RpcKillMessage
 
         if (killer == null)
         {
+            interactionType += interactionType != 0 ? 4 : 0; // Set the crash flag if the crashee was a player
             string cause;
             switch (killedType)
             {
@@ -191,7 +224,7 @@ public static class Patch_RpcKillMessage
                     break;
             }
             string message = killedFactionTag + killed.unitName + cause;
-            NODiscordChatBridge.I.MessageToDiscord(message, NOMessageType.Killfeed, null);
+            NODiscordChatBridge.I.MessageToDiscord(message, NOMessageType.Killfeed, interactionType);
             return true;
         }
         interactionType += killer.unitName.Contains("[") ? 2 : 0; // Increment flag by 1 if it's a player (square brackets are a dead giveaway)
@@ -199,7 +232,8 @@ public static class Patch_RpcKillMessage
         // 0, no players involved
         // 1, killed is a player
         // 2, killer is a player,
-        // 3, both are players
+        // 3, both are players,
+        // -1 is a special flag which means a player crashed into the ground
         string killerFactionTag = "";
         if (killer.HQ != null) killerFactionTag = "[" + killer.HQ.faction.factionTag + "]";
         string action = "";
@@ -223,10 +257,15 @@ public static class Patch_RpcKillMessage
                 break;
         }
 
-        string friendlyFire = killedFactionTag == killerFactionTag ? " [ FRIENDLY FIRE! ]" : "";
+        string friendlyFire = "";
+        if (killedFactionTag == killerFactionTag)
+        {
+            friendlyFire = " [ FRIENDLY FIRE! ]";
+            interactionType += 8;
+        }
         
         string message2 = killerFactionTag + killer.unitName + action + killedFactionTag + killed.unitName + friendlyFire;
-        NODiscordChatBridge.I.MessageToDiscord(message2, NOMessageType.Killfeed, null);
+        NODiscordChatBridge.I.MessageToDiscord(message2, NOMessageType.Killfeed, interactionType);
         return true;
         
         

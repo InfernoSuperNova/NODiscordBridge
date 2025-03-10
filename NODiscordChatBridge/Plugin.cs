@@ -143,18 +143,19 @@ public static class Patch_TargetReceiveMessage
     }
 }
 
-[HarmonyPatch(typeof(MessageManager), "UserCode_RpcKillMessage_\\u002D1012857865")]
+[HarmonyPatch(typeof(MessageManager), "UserCode_RpcKillMessage_-1012857865")]
 public static class Patch_RpcKillMessage
 {
 
     [HarmonyPrefix]
 
-    public static void Prefix(MessageManager __instance, int killerID, int killedID, KillType killedType)
+    public static bool Prefix(MessageManager __instance, int killerID, int killedID, KillType killedType)
     {
         PersistentUnit killer = UnitRegistry.GetPersistentUnit(killerID);
         PersistentUnit killed = UnitRegistry.GetPersistentUnit(killedID);
         
         // TODO: Kill feed
+        return true;
     }
 }
 

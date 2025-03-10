@@ -184,7 +184,8 @@ public class DiscordGatewayClient
     {
         JObject json = JObject.Parse(message);
         //_logger.LogInfo(json.ToString(Formatting.Indented));
-        string type = json["t"]?.ToString() ?? "Heartbeat?";
+        string type = json["t"]?.ToString() ?? "Heartbeat";
+        if (type == "") type = "Heartbeat";
         _logger.LogInfo("Message type: " + type);
         switch (type)
         {

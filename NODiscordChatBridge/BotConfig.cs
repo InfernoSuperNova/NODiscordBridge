@@ -3,23 +3,26 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NODiscordChatBridge;
 
 public class BotConfig
 {
     public static BotConfig I;
-    public string BotToken { get; private set; }
-    public string ChatChannelId { get; private set; }
-    public string KillLogChannelId { get; private set; }
-    public int KillLoggingLevel { get; private set; }
+    public string BotToken { get; set; }
+    public string ChatChannelId { get; set; }
+    public string KillLogChannelId { get; set; }
+    public int KillLoggingLevel { get; set; }
 
     private static string ConfigPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "discord_config.json");
     
     public static BotConfig LoadConfig()
     {
+        NODiscordChatBridge.Logger.LogInfo("Loading config...");
         if (!File.Exists(ConfigPath))
         {
+            NODiscordChatBridge.Logger.LogInfo("Config file does not exist, generating default file...");
             var defaultConfig = new BotConfig
             {
                 BotToken = "YOUR_BOT_TOKEN_HERE",

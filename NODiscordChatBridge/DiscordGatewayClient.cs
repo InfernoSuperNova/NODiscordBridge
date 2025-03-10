@@ -3,6 +3,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BepInEx;
 using BepInEx.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -182,7 +183,23 @@ public class DiscordGatewayClient
 
     private void HandleGatewayMessage(string message)
     {
-        JObject json = JObject.Parse(message);
+        if (message.IsNullOrWhiteSpace())
+        {
+            _logger.LogWarning("Recieved message is empty!");
+            return;
+        }
+
+        JObject json;
+        try
+        {
+            json = JObject.Parse(message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to parse JSON: {ex.Message}\nRaw message: '{message}'");
+            return;
+        }
+        
         //_logger.LogInfo(json.ToString(Formatting.Indented));
         string type = json["t"]?.ToString() ?? "Heartbeat";
         if (type == "") type = "Heartbeat";

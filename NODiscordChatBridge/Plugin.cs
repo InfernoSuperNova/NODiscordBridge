@@ -142,3 +142,19 @@ public static class Patch_TargetReceiveMessage
         return true; 
     }
 }
+
+[HarmonyPatch(typeof(MessageManager), "UserCode_RpcKillMessage_\\u002D1012857865")]
+public static class Patch_RpcKillMessage
+{
+
+    [HarmonyPrefix]
+
+    public static void Prefix(MessageManager __instance, int killerID, int killedID, KillType killedType)
+    {
+        PersistentUnit killer = UnitRegistry.GetPersistentUnit(killerID);
+        PersistentUnit killed = UnitRegistry.GetPersistentUnit(killedID);
+        
+        // TODO: Kill feed
+    }
+}
+

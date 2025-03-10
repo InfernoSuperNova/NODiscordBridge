@@ -164,12 +164,12 @@ public static class Patch_RpcKillMessage
 public static class Patch_JoinMessage
 {
     [HarmonyPrefix]
-    public static bool Prefix(MessageManager __instance, Player player)
+    public static bool Prefix(MessageManager __instance, Player joinedPlayer)
     {
         try
         {
-            string message = player.PlayerName + " joined the game";
-            NODiscordChatBridge._singleton.MessageToDiscord(message, NOMessageType.Chat, player);
+            string message = joinedPlayer.PlayerName + " joined the game";
+            NODiscordChatBridge._singleton.MessageToDiscord(message, NOMessageType.Chat, joinedPlayer);
         }
         catch (Exception ex)
         {

@@ -79,10 +79,18 @@ public class DiscordGatewayClient
     {
         while (!_cts.Token.IsCancellationRequested)
         {
-            var heartbeatPayload = new { op = 1, d = (int?)null };
-            _logger.LogInfo("Discord bot: Sending heartbeat...");
-            await SendMessageAsync(JsonConvert.SerializeObject(heartbeatPayload));
-            _logger.LogInfo("Discord bot: Heartbeat sent");
+            try
+            {
+                var heartbeatPayload = new { op = 1, d = (int?)null };
+                _logger.LogInfo("Discord bot: Sending heartbeat...");
+                await SendMessageAsync(JsonConvert.SerializeObject(heartbeatPayload));
+                _logger.LogInfo("Discord bot: Heartbeat sent");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo(ex);
+            }
+            
             await Task.Delay(_heartbeatInterval, _cts.Token);
         }
     }

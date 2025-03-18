@@ -4,6 +4,6 @@ namespace NODiscordChatBridge
     {
         public const string PLUGIN_GUID = "NODiscordChatBridge";
         public const string PLUGIN_NAME = "deltawing.nodiscordchatbridge";
-        public const string PLUGIN_VERSION = "0.2.0";
+        public const string PLUGIN_VERSION = "0.2.1";
     }
 }

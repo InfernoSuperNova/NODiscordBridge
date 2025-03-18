@@ -5,7 +5,7 @@
   },
   "projects": {
     "/home/deltawing/RiderProjects/NODiscordBridge/NODiscordChatBridge/NODiscordChatBridge.csproj": {
-      "version": "0.1.2",
+      "version": "0.2.0",
       "restore": {
         "projectUniqueName": "/home/deltawing/RiderProjects/NODiscordBridge/NODiscordChatBridge/NODiscordChatBridge.csproj",
         "projectName": "NODiscordChatBridge",

@@ -279,6 +279,8 @@ public static class Patch_JoinMessage
     [HarmonyPrefix]
     public static bool Prefix(MessageManager __instance, Player joinedPlayer)
     {
+        if (!BotConfig.I.LogJoinMessages) return true;
+        
         try
         {
             string message = joinedPlayer.PlayerName + " joined the game";
@@ -300,6 +302,8 @@ public static class Patch_DisconnectedMessage
     [HarmonyPrefix]
     public static bool Prefix(MessageManager __instance, Player player)
     {
+        if (!BotConfig.I.LogJoinMessages) return true;
+        
         try
         {
             string message = player.PlayerName + " disconnected";
